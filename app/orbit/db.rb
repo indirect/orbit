@@ -49,7 +49,12 @@ class OrbitDB
   def gather_post_minimal_metadata(path)
     walk_posts_path(path)
 
-    @post_minimal_metadata.sort_by! { |hash| hash['dateCreated'].strftime('%s').to_i }
+    @post_minimal_metadata.each do |attrs|
+      created = attrs["dateCreated"]
+      attrs["dateCreated"] = Time.parse(created) unless created.is_a?(Time)
+    end
+
+    @post_minimal_metadata.sort_by! { |hash| hash['dateCreated'].to_i }
     @post_minimal_metadata.reverse!
 
     @categories.unshift('[Orbit - Draft]')
